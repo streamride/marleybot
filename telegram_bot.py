@@ -5,7 +5,8 @@ from datetime import datetime
 from flask import Flask, request
 from pymongo import MongoClient
 
-API_TOKEN = os.environ.get('TOKEN', '815681975:AAFyNwDfX6mepTn5aZoabqUMBefYZhfxiUM')
+API_TOKEN = os.environ.get(
+    'TOKEN', '815681975:AAFyNwDfX6mepTn5aZoabqUMBefYZhfxiUM')
 bot = telebot.TeleBot(API_TOKEN)
 
 
@@ -13,7 +14,7 @@ server = Flask(__name__)
 TELEBOT_URL = 'telebot_webhook/'
 BASE_URL = 'https://marleybot.herokuapp.com/'
 
-MONGODB_URI = os.environ.get('MONGODB_URI', 'mongodb://localhost/logsdb')
+MONGODB_URI = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/logsdb')
 
 mongo_client = MongoClient(MONGODB_URI)
 mongo_db = mongo_client.get_default_database()
@@ -33,7 +34,9 @@ def reply_with_log(message, response):
 # Handle '/start' and '/help'
 @bot.message_handler(commands=['help', 'start'])
 def send_welcome(message):
-    reply_with_log(message, "Привет, я бот, обученный на разговорах группы Чат имени бобов в марле, напиши мне что-нибудь!")
+    print(message)
+    reply_with_log(
+        message, "Привет, я бот, обученный на разговорах группы Чат имени бобов в марле, напиши мне что-нибудь!")
 
 
 # Handle all other messages with content_type 'text' (content_types defaults to ['text'])
@@ -44,7 +47,8 @@ def echo_message(message):
 
 @server.route('/' + TELEBOT_URL + API_TOKEN, methods=['POST'])
 def get_message():
-    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+    bot.process_new_updates(
+        [telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
     return "!", 200
 
 
@@ -58,9 +62,11 @@ def webhook():
 @server.route("/show_logs")
 def show_logs():
     messages_list = list(mongo_logs.find())
-    result = '<div>There are {} messages total. The last 10 are: </div><table>'.format(len(messages_list))
+    result = '<div>There are {} messages total. The last 10 are: </div><table>'.format(
+        len(messages_list))
     row_template = '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
-    result += row_template.format('time', 'user', 'text from user', 'response from bot')
+    result += row_template.format('time', 'user',
+                                  'text from user', 'response from bot')
     for message in messages_list[-10:]:
         result += row_template.format(
             message['timestamp'], message['user_nickname'], message['text'], message['response']
