@@ -17,7 +17,7 @@ BASE_URL = 'https://marleybot.herokuapp.com/'
 MONGODB_URI = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/logsdb')
 
 mongo_client = MongoClient(MONGODB_URI)
-mongo_db = mongo_client.get_default_database()
+mongo_db = mongo_client.test
 mongo_logs = mongo_db.get_collection('logs')
 
 
